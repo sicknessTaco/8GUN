@@ -230,6 +230,10 @@ _pkginfo.txt
 !?*.[Cc]ache/
 
 # Others
+assets/
+*.mp3
+*.png
+*.jpg
 ClientBin/
 ~$*
 *~
