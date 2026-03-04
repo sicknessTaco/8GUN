@@ -37,6 +37,10 @@ int main(int argc, char* argv[]) {
 
         if (engine.getScene() == 0) {
             menu.update(dt);
+            if (menu.isExiting()) {
+                engine.quit();
+                break;
+            }
             menu.render();
 
             // ✅ DEBUG: Verifica si se solicitó iniciar juego

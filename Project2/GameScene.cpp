@@ -8,6 +8,8 @@
 #include <cmath>
 #include <string>
 #include <algorithm>
+#include <cstdio>
+#include <cstring>
 
 // Constructor de Enemy
 Enemy::Enemy(float x, float y, int type)
@@ -26,9 +28,9 @@ GameScene::GameScene(Engine* engine, int zone, int song)
 
     // Cargar música: Zona 1, Canción 1 → "1/1.mp3", etc.
     std::string path = "assets/music/" + std::to_string(m_zone + 1) + "/" + std::to_string(m_song + 1) + ".mp3";
-    Mix_Music* music = Mix_LoadMUS(path.c_str());
-    if (music) {
-        Mix_PlayMusic(music, -1);
+    m_music = Mix_LoadMUS(path.c_str());
+    if (m_music) {
+        Mix_PlayMusic(m_music, -1);
         m_musicPlaying = true;
         std::cout << "🎵 Reproduciendo: " << path << std::endl;
     }
@@ -40,6 +42,11 @@ GameScene::GameScene(Engine* engine, int zone, int song)
 }
 
 GameScene::~GameScene() {
+    if (m_music) {
+        Mix_HaltMusic();
+        Mix_FreeMusic(m_music);
+        m_music = nullptr;
+    }
     if (m_levelText) SDL_DestroyTexture(m_levelText);
 }
 
@@ -51,7 +58,7 @@ void GameScene::loadAssets() {
     }
 
     char levelText[64];
-    sprintf_s(levelText, sizeof(levelText), "ZONA %d - CANCION %d", m_zone + 1, m_song + 1);
+    std::snprintf(levelText, sizeof(levelText), "ZONA %d - CANCION %d", m_zone + 1, m_song + 1);
 
     SDL_Color color;
     if (m_zone == 0) color = { 0, 200, 80, 255 }; // Verde
@@ -215,7 +222,9 @@ void GameScene::checkCollisions() {
 void GameScene::checkBeat() {
     if (!m_musicPlaying) return;
 
-    m_currentMusicTime = Mix_GetMusicPosition(m_engine->getMusic()) / 1000.0f;
+    if (!m_music) return;
+
+    m_currentMusicTime = static_cast<float>(Mix_GetMusicPosition(m_music));
 
     if (m_currentMusicTime - m_lastBeatTime >= m_beatInterval) {
         m_isOnBeat = true;
