@@ -3,6 +3,7 @@
 #include "Engine.hpp"
 #include <iostream>
 #include <sstream>
+#include <cstring>
 
 const LevelMenu::Zone LevelMenu::ZONES[NUM_ZONES] = {
     {"ZONA 1", 1, {0, 200, 80, 255}},      // Verde
@@ -142,6 +143,7 @@ void LevelMenu::handleInput(SDL_Keycode key) {
         case SDLK_SPACE: case SDLK_RETURN:
             if (isLevelUnlocked(m_selectedZone, m_selectedSong)) {
                 std::cout << "▶️ Iniciando Zona " << (m_selectedZone + 1) << ", Canción " << (m_selectedSong + 1) << std::endl;
+                m_shouldStartGame = true;
             }
             else {
                 std::cout << "🔒 Canción bloqueada. Completa la anterior." << std::endl;
@@ -161,12 +163,13 @@ void LevelMenu::handleInput(SDL_Keycode key) {
             m_selectedZone = (m_selectedZone + 1) % NUM_ZONES;
             break;
         case SDLK_SPACE: case SDLK_RETURN:
-            if (isLevelUnlocked(m_selectedZone, m_selectedSong)) {
-                std::cout << "▶️ Iniciando Zona " << (m_selectedZone + 1) << ", Canción " << (m_selectedSong + 1) << std::endl;
-                m_shouldStartGame = true; // ✅ Marca para iniciar juego
+            if (isLevelUnlocked(m_selectedZone, 0)) {
+                m_selectingSong = true;
+                m_selectedSong = 0;
+                std::cout << "▶️ Seleccionando canciones de Zona " << (m_selectedZone + 1) << std::endl;
             }
             else {
-                std::cout << "🔒 Canción bloqueada. Completa la anterior." << std::endl;
+                std::cout << "🔒 Zona bloqueada. Completa la zona anterior." << std::endl;
             }
             break;
         case SDLK_ESCAPE:

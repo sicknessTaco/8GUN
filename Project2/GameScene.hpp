@@ -1,6 +1,7 @@
 ﻿// GameScene.hpp
 #pragma once
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include <vector>
 #include <cmath>
 
@@ -62,6 +63,7 @@ private:
 
     bool m_complete = false;
     bool m_musicPlaying = false;
+    Mix_Music* m_music = nullptr;
 
     SDL_Texture* m_levelText = nullptr;
 
